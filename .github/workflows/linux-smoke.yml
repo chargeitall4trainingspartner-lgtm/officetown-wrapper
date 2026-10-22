@@ -1,0 +1,112 @@
+name: linux-smoke
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu-22.04
+            image: ubuntu:22.04
+            installer: apt
+            runtime: "libasound2 libgbm1 libgtk-3-0 libnss3 libxss1 libnotify4 libsecret-1-0 xdg-utils"
+          - name: ubuntu-24.04
+            image: ubuntu:24.04
+            installer: apt
+            runtime: "libasound2t64 libgbm1 libgtk-3-0t64 libnss3 libxss1 libnotify4 libsecret-1-0 xdg-utils"
+          - name: fedora
+            image: fedora:latest
+            installer: dnf
+            runtime: "alsa-lib mesa-libgbm gtk3 nss libXScrnSaver libnotify libsecret xdg-utils"
+          - name: archlinux
+            image: archlinux:latest
+            installer: pacman
+            runtime: "alsa-lib mesa gtk3 nss libxss libnotify libsecret xdg-utils"
+    container: ${{ matrix.image }}
+
+    steps:
+      - name: Install base + Linux runtime deps (docs/linux.md section 1)
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "${{ matrix.installer }}" in
+            apt)
+              apt-get update
+              DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+                git curl xz-utils ca-certificates xvfb xauth \
+                ${{ matrix.runtime }}
+              ;;
+            dnf)
+              dnf install -y git curl xz ca-certificates \
+                xorg-x11-server-Xvfb xorg-x11-xauth \
+                ${{ matrix.runtime }}
+              ;;
+            pacman)
+              pacman -Syu --noconfirm --needed \
+                git curl xz ca-certificates \
+                xorg-server-xvfb xorg-xauth \
+                ${{ matrix.runtime }}
+              ;;
+            *)
+              echo "unknown installer: ${{ matrix.installer }}" >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node (from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install JS deps (npm ci; runs verify.js --postinstall)
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --version
+          npm --version
+          npm ci --include=dev
+
+      - name: Smoke test (xvfb + non-root user + setuid chrome-sandbox)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # docs/linux.md section 2: chrome-sandbox must be root:root, mode 4755,
+          # for Chromium's sandbox to engage when running as a non-root user.
+          SB="node_modules/electron/dist/chrome-sandbox"
+          test -f "$SB"
+          chown root:root "$SB"
+          chmod 4755 "$SB"
+
+          # Electron refuses to launch as root without --no-sandbox. We do NOT
+          # pass --no-sandbox: the point is to prove the sandbox path works.
+          id runner >/dev/null 2>&1 || useradd -m runner
+          chmod -R a+rX "$GITHUB_WORKSPACE"
+
+          # Success = Electron stays up until `timeout` kills it (exit 124).
+          # Any other exit code = crash before 30s = failure.
+          set +e
+          runuser -u runner -- env HOME=/home/runner bash -c \
+            "cd '$GITHUB_WORKSPACE' && timeout 30s xvfb-run -a ./node_modules/.bin/electron ."
+          rc=$?
+          set -e
+          echo "electron exit code: $rc"
+          if [ "$rc" -ne 124 ]; then
+            echo "FAIL: expected 124 (killed by timeout), got $rc" >&2
+            exit 1
+          fi
+          echo "OK: electron stayed up for 30s (rc=124 from timeout)"
