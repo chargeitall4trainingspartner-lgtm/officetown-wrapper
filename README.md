@@ -169,6 +169,8 @@ officetown-wrapper/
 
 ## Troubleshooting
 
+**On Linux, or if `npm run verify` sent you here about `chrome-sandbox`.** The steps below are Windows-specific. For the Linux case — `chrome-sandbox is not root:4755`, and hosts that restrict unprivileged user namespaces — use [`docs/linux.md` §4 Troubleshooting](docs/linux.md#4-troubleshooting). Do not disable the Chromium sandbox on Linux.
+
 **Blank window, terminal shows `render-process-gone { reason: 'launch-failed', exitCode: 18 }`.**
 
 Electron's Chromium sandbox could not start the renderer. This is a known Windows issue, usually one of: running the shell as Administrator, Memory Integrity / Core Isolation, or third-party anti-virus blocking `node_modules\electron\dist\electron.exe`. In order:
