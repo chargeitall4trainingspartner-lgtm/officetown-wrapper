@@ -76,10 +76,13 @@ wrong answers).
 - **Arch** — `archlinux.org/packages/search/json/?name=`. Retained as
   `bincheck-output.txt`.
 
-A CI matrix that installs these packages inside `ubuntu:22.04`, `ubuntu:24.04`,
-`fedora:latest`, and `archlinux:latest` containers is planned; when that matrix
-is green, replace this paragraph with a link to the run. Until then, treat this
-section as *verified by package-index probe*, not *verified by install-and-run*.
+A CI matrix installs these packages inside `ubuntu:22.04`, `ubuntu:24.04`,
+`fedora:latest`, and `archlinux:latest` containers. Run
+[39748467104 attempt 2](https://github.com/chargeitall4trainingspartner-lgtm/officetown-wrapper/actions/runs/39748467104)
+(head `d454240`) finished green: all four jobs passed, including the smoke
+step. This section is therefore *verified by install-and-run* as well as by
+package-index probe. (Attempt 1 failed only on `ubuntu:22.04` with an upstream
+mirror size mismatch on `jammy-updates/main`; it did not reproduce on rerun.)
 
 ## 2. Chromium sandbox
 
