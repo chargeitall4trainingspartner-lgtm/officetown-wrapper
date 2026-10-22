@@ -108,9 +108,9 @@ officetown-wrapper/
 | `backgroundThrottling: false` eliminates the 60 s stall | ⚠️ **not measured on this build** — see below |
 | Stage 2 (large message burst while minimized) | ⚠️ **not tested** |
 
-**On the throttling numbers.** The report's measurement — ~60,005 ms stalls in stock Edge versus a 614 ms max gap under the wrapper — was taken on **Electron 35.1.5**. This checkout is pinned to **35.7.5**. The flag is unchanged and behaves identically across the 35.x branch, but if you want the numbers to be true for *this* build, run the minimize test yourself: launch, scroll to bottom, minimize, wait five minutes, restore. Confirm the view is still pinned.
+**On the throttling numbers.** The original measurement — ~60,005 ms stalls in stock Edge versus a 614 ms max gap under the wrapper — was taken on **Electron 35.1.5**. This checkout is pinned to **35.7.5**. The flag is unchanged and behaves identically across the 35.x branch, but if you want the numbers to be true for *this* build, run the minimize test yourself: launch, scroll to bottom, minimize, wait five minutes, restore. Confirm the view is still pinned.
 
-**On Stage 2.** The only remaining question from the report: can a large message burst while minimized defeat the pin? Answering it requires a second account in a regular browser, 100+ messages, and five idle minutes. See the report §8. Until then, this is documented as an open question, not a pass or a failure.
+**On Stage 2.** The only remaining open question: can a large message burst while minimized defeat the pin? Answering it requires a second account in a regular browser, 100+ messages, and five idle minutes. Until then, this is documented as an open question, not a pass or a failure.
 
 ---
 
@@ -158,8 +158,8 @@ Electron's Chromium sandbox could not start the renderer. This is a known Window
 | Stage | Result |
 |---|---|
 | Wrapper loads the live site, patch injects, origin guard behaves, login works, session persists | **Confirmed by observation** |
-| Background throttling eliminated (60 s stall → sub-second gaps) | **Not measured on 35.7.5** — report measured it on 35.1.5 |
-| Large message burst while minimized (report Stage 2) | **Not tested** — open question |
+| Background throttling eliminated (60 s stall → sub-second gaps) | **Not measured on 35.7.5** — originally measured it on 35.1.5 |
+| Large message burst while minimized (Stage 2) | **Not tested** — open question |
 | Google OAuth via loopback bridge | **Not applicable** — the app uses full-window redirect, the bridge is removed |
 
 The wrapper is doing the job it was built for on this machine. The two "not measured / not tested" rows are the honest boundary of the evidence; neither blocks daily use.
