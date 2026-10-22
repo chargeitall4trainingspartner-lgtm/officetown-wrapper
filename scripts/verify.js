@@ -83,7 +83,7 @@ if (process.platform === 'linux' && !POSTINSTALL) {
   if (fs.existsSync(sb)) {
     const st = fs.statSync(sb);
     if (st.uid !== 0 || !(st.mode & 0o4000)) {
-      ok.push('note: chrome-sandbox is not root:4755 — fine where unprivileged user namespaces are allowed, otherwise see README §Troubleshooting');
+      ok.push('note: chrome-sandbox is not root:4755 — fine where unprivileged user namespaces are allowed, otherwise see docs/linux.md §4');
     }
   }
 }
