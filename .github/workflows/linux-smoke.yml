@@ -34,7 +34,9 @@ jobs:
             image: archlinux:latest
             installer: pacman
             runtime: "alsa-lib mesa gtk3 nss libxss libnotify libsecret xdg-utils"
-    container: ${{ matrix.image }}
+    container:
+      image: ${{ matrix.image }}
+      options: --cap-add=SYS_ADMIN --security-opt seccomp=unconfined --security-opt apparmor=unconfined
 
     steps:
       - name: Install base + Linux runtime deps (docs/linux.md section 1)
