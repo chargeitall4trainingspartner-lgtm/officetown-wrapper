@@ -6,11 +6,11 @@ An Electron wrapper for [`officetown.app`](https://www.officetown.app) that sets
 
 ## Requirements
 
-- **Node.js 20.11 – 24.x**
-- **~150 MB network** on first install (the pinned Electron build downloads from the Electron CDN)
-- **~400 MB disk** for `node_modules`
+- **Node.js 20.11 – 24.x** (24.x recommended; `.nvmrc` pins 24)
+- **~150 MB network** for npm dependencies (the pinned Electron build downloads from the Electron CDN); installing Node and Homebrew adds more on first setup
+- **~400 MB disk** for `node_modules`; Node and Homebrew add more on first setup
 
-No git required, no global installs, no binaries to trust beyond Node and Electron themselves.
+No git required. No global npm packages and no paid code signing. Node is installed via a free system package manager (winget / Homebrew / fnm). The Electron binary is signed, so you will not see "unknown publisher" warnings when running from source.
 
 ---
 
@@ -24,15 +24,16 @@ You do not need to know how to code. Copy and paste the commands exactly as show
 ```
 winget install OpenJS.NodeJS.LTS
 ```
-Click **Yes** if asked. Wait for "Successfully installed".
+Click **Yes** if asked. Wait for "Successfully installed". Then check: `node --version` should start with `v24.` (WinGet has no versioned Node 24 package, so LTS may drift to a newer major). If it is not v24, download the Node 24 installer from https://nodejs.org and run it.
 
 **macOS:** Open **Terminal** (Cmd+Space -> type Terminal -> Enter) and run:
 ```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
-Follow the prompts (press Enter when asked). Then run:
+Follow the prompts. macOS may ask to install Command Line Tools - click Install and wait (can take 10-20 min). Then run:
 ```
-brew install node
+brew install node@24
+brew link --overwrite node@24
 ```
 
 **Linux:** Open your terminal and run:
@@ -79,8 +80,10 @@ The app window opens. To use it again later, repeat steps 3 and 5 (you do not ne
 ### Warnings you may see
 
 - **Windows Firewall / antivirus:** Click **Allow access** or **Allow**. This is normal - the app needs internet access.
+- **macOS Command Line Tools prompt** (during Homebrew install): Click **Install** and wait. Can take 10-20 min.
 - **macOS "Are you sure you want to open it?":** Click **Open**. This appears once and is not a virus warning.
-- You will not see "unknown publisher" or "unverified developer" blocks with this method.
+- **npm ci fails with an engines or Node version error:** Your Node version is not 20.11-24.x. Install Node 24 from https://nodejs.org and run `npm ci` again.
+- **You will not see "unknown publisher" or "unverified developer" blocks.** This is a free, unsigned-source install: Electron itself is signed, and you run it directly from source. No paid code signing is involved.
 
 ---
 
