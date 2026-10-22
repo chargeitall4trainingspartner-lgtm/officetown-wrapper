@@ -1,0 +1,20 @@
+{
+  "name": "officetown-wrapper",
+  "version": "0.1.0",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "verify": "node scripts/verify.js",
+    "postinstall": "node scripts/verify.js --postinstall"
+  },
+  "engines": {
+    "node": ">=20.11.0 <25"
+  },
+  "devDependencies": {
+    "electron": "35.7.5"
+  },
+  "allowScripts": {
+    "electron@35.7.5": true
+  }
+}
