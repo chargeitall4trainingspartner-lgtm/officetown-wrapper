@@ -14,23 +14,73 @@ No git required, no global installs, no binaries to trust beyond Node and Electr
 
 ---
 
-## Install
+## Install (for non-technical users)
 
-From the repo root:
+You do not need to know how to code. Copy and paste the commands exactly as shown.
 
-```sh
+### 1. Install Node.js 24
+
+**Windows 10/11:** Open **PowerShell** (Start -> type powershell -> Enter) and run:
+```
+winget install OpenJS.NodeJS.LTS
+```
+Click **Yes** if asked. Wait for "Successfully installed".
+
+**macOS:** Open **Terminal** (Cmd+Space -> type Terminal -> Enter) and run:
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+Follow the prompts (press Enter when asked). Then run:
+```
+brew install node
+```
+
+**Linux:** Open your terminal and run:
+```
+curl -fsSL https://fnm.vercel.app/install | bash
+```
+Close and reopen the terminal, then run:
+```
+fnm install 24
+fnm use 24
+```
+
+### 2. Download the project
+
+On the GitHub page, click the green **Code** button -> **Download ZIP**. Extract the ZIP (right-click -> Extract All on Windows, or double-click on macOS/Linux). You will get a folder named officetown-wrapper-main.
+
+### 3. Open a terminal in that folder
+
+**Windows:** Open the extracted folder in File Explorer. Click the address bar, type powershell, press Enter.
+
+**macOS:** Right-click the folder in Finder -> **Services -> New Terminal at Folder**. (If missing, open Terminal, type cd followed by a space, drag the folder into the window, press Enter.)
+
+**Linux:** Right-click inside the folder -> **Open in Terminal**.
+
+### 4. Install dependencies
+
+In the terminal, run:
+```
+npm ci
+```
+Wait for it to finish. If you see electron binary missing, run:
+```
+npm install-scripts approve electron
 npm ci
 ```
 
-`npm ci` installs the exact tree recorded in `package-lock.json` and then runs `postinstall` → `scripts/verify.js`, which fails the install if anything is off. A bad install cannot complete.
+### 5. Start the app
 
-**On npm 11+ (Node 22+), Electron's install script is blocked by default.** If `npm ci` fails with `electron binary missing`, approve it once:
-
-```sh
-npm install-scripts approve electron
 ```
+npm start
+```
+The app window opens. To use it again later, repeat steps 3 and 5 (you do not need npm ci again).
 
-The approval is recorded in `package.json` (`"allowScripts": { "electron@35.7.5": true }`), so it travels with the repo. On older npm the field is ignored and the same one-time approval may be needed manually.
+### Warnings you may see
+
+- **Windows Firewall / antivirus:** Click **Allow access** or **Allow**. This is normal - the app needs internet access.
+- **macOS "Are you sure you want to open it?":** Click **Open**. This appears once and is not a virus warning.
+- You will not see "unknown publisher" or "unverified developer" blocks with this method.
 
 ---
 
